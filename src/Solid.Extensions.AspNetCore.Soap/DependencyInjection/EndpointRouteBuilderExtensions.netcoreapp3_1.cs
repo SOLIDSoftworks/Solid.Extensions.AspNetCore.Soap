@@ -13,6 +13,8 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class Solid_Extensions_AspNetCore_Soap_EndpointRouteBuilderExtensions
     {
+        public static IEndpointRouteBuilder MapSoapService<TService>(this IEndpointRouteBuilder endpoints, PathString path)
+            => endpoints.MapSoapService<TService>(path, _ => {});
         public static IEndpointRouteBuilder MapSoapService<TService>(this IEndpointRouteBuilder endpoints, PathString path, Action<ISoapApplicationBuilder> configure)
         {
             var builder = endpoints.CreateApplicationBuilder();

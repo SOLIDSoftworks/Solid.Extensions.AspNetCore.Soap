@@ -10,6 +10,8 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ApplicationBuilderExtensions
     {
+        public static IApplicationBuilder MapSoapService<TService>(this IApplicationBuilder builder, PathString path)
+            => builder.MapSoapService<TService>(path, _ => {});
         public static IApplicationBuilder MapSoapService<TService>(this IApplicationBuilder builder, PathString path, Action<ISoapApplicationBuilder> configure)
         {
             builder.Map(path, b => b.UseSoapService<TService>(configure));
@@ -18,16 +20,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
         internal static IApplicationBuilder UseSoapService<TService>(this IApplicationBuilder builder, Action<ISoapApplicationBuilder> configure)
         {
-            //builder.Use(async (context, next) =>
-            //{
-            //    var requestServices = context.RequestServices;
-            //    using (var scope = requestServices.CreateScope())
-            //    {
-            //        context.RequestServices = scope.ServiceProvider;
-            //        await next();
-            //        context.RequestServices = requestServices;
-            //    }
-            //});
             builder.UseMiddleware<SoapRequestMiddleware<TService>>();
             var soap = new SoapApplicationBuilder(builder);
             configure(soap);
