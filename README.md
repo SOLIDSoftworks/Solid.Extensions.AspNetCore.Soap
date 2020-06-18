@@ -1,0 +1,2 @@
+# Solid.Extensions.AspNetCore.Soap
+ 
