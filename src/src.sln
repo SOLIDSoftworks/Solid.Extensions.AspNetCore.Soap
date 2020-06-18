@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29728.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".repo", ".repo", "{34AA56B8-A14F-44FC-A807-FDC1B62D50A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".tests", ".tests", "{CA8D24E7-FF86-403B-A675-6B8C5D516CC2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solid.Extensions.AspNetCore.Soap", "Solid.Extensions.AspNetCore.Soap\Solid.Extensions.AspNetCore.Soap.csproj", "{B4061097-6805-40B7-85ED-9CF271D590C7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solid.Extensions.AspNetCore.Soap.Tests", "Solid.Extensions.AspNetCore.Soap.Tests\Solid.Extensions.AspNetCore.Soap.Tests.csproj", "{6C59C9A7-0833-40F5-9427-E4513B1F682C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solid.Testing.AspNetCore.Extensions.XUnit.Soap", "Solid.Testing.AspNetCore.Extensions.XUnit.Soap\Solid.Testing.AspNetCore.Extensions.XUnit.Soap.csproj", "{C32D5928-A110-40ED-B25F-986AFE764B94}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B4061097-6805-40B7-85ED-9CF271D590C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4061097-6805-40B7-85ED-9CF271D590C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4061097-6805-40B7-85ED-9CF271D590C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4061097-6805-40B7-85ED-9CF271D590C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C59C9A7-0833-40F5-9427-E4513B1F682C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C59C9A7-0833-40F5-9427-E4513B1F682C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C59C9A7-0833-40F5-9427-E4513B1F682C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C59C9A7-0833-40F5-9427-E4513B1F682C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C32D5928-A110-40ED-B25F-986AFE764B94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C32D5928-A110-40ED-B25F-986AFE764B94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C32D5928-A110-40ED-B25F-986AFE764B94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C32D5928-A110-40ED-B25F-986AFE764B94}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6C59C9A7-0833-40F5-9427-E4513B1F682C} = {CA8D24E7-FF86-403B-A675-6B8C5D516CC2}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F931A6CC-19D2-4628-9C5F-87DA5F16F5FD}
+	EndGlobalSection
+EndGlobal
