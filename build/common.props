@@ -1,12 +1,2 @@
 ﻿<Project>
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
-    <LangVersion>8.0</LangVersion>
-    <Authors>SOLID Softworks</Authors>
-    <Copyright>© SOLID Softworks. All rights reserved.</Copyright>
-    <OutputTypeEx>library</OutputTypeEx>
-    <PackageProjectUrl>https://github.com/SOLIDSoftworks/Solid.Extensions.AspNetCore.Soap</PackageProjectUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/SOLIDSoftworks/Solid.Extensions.AspNetCore.Soap</RepositoryUrl>
-  </PropertyGroup>
 </Project>
