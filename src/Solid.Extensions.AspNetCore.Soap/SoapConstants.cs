@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Solid.Extensions.AspNetCore.Soap
 {
-    public static class Constants
+    internal static class SoapConstants
     {
         public const string Soap11EnvelopeNamespace = "http://schemas.xmlsoap.org/soap/envelope/";
         public const string Soap12EnvelopeNamespace = "http://www.w3.org/2003/05/soap-envelope";

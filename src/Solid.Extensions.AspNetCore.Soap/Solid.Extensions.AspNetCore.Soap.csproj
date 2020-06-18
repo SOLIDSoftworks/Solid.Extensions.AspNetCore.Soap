@@ -8,6 +8,7 @@
     <PackageProjectUrl>https://github.com/SOLIDSoftworks/Solid.Extensions.AspNetCore.Soap</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/SOLIDSoftworks/Solid.Extensions.AspNetCore.Soap</RepositoryUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup>

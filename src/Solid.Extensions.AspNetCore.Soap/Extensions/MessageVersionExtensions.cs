@@ -10,7 +10,7 @@ namespace System.ServiceModel.Channels
         public static FaultCode CreateFaultCode(this MessageVersion version, string code = null, FaultCode sub = null)
         {
             var envelope = version.Envelope;
-            var ns = envelope == EnvelopeVersion.Soap11 ? Constants.Soap11EnvelopeNamespace : Constants.Soap12EnvelopeNamespace;
+            var ns = envelope == EnvelopeVersion.Soap11 ? SoapConstants.Soap11EnvelopeNamespace : SoapConstants.Soap12EnvelopeNamespace;
             if (string.IsNullOrWhiteSpace(code))
                 code = envelope == EnvelopeVersion.Soap11 ? "Server" : "Receiver";
             if (sub != null)
@@ -20,7 +20,7 @@ namespace System.ServiceModel.Channels
         public static FaultCode CreateSenderFaultCode(this MessageVersion version, string code = null, FaultCode sub = null)
         {
             var envelope = version.Envelope;
-            var ns = envelope == EnvelopeVersion.Soap11 ? Constants.Soap11EnvelopeNamespace : Constants.Soap12EnvelopeNamespace;
+            var ns = envelope == EnvelopeVersion.Soap11 ? SoapConstants.Soap11EnvelopeNamespace : SoapConstants.Soap12EnvelopeNamespace;
             if (string.IsNullOrWhiteSpace(code))
                 code = envelope == EnvelopeVersion.Soap11 ? "Client" : "Sender";
             if (sub != null)

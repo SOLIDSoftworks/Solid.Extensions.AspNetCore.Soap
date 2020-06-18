@@ -72,7 +72,7 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("expected")]
-        public async Task ShouldOutEcho(string expected)
+        public void ShouldOutEcho(string expected)
         {
             var channel = _fixture.CreateChannel<IEchoServiceContract>(path: "echo");
             channel.OutEcho(expected, out var value);
@@ -84,7 +84,7 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("expected")]
-        public async Task ShouldWrappedEcho(string expected)
+        public void ShouldWrappedEcho(string expected)
         {
             var channel = _fixture.CreateChannel<IEchoServiceContract>(path: "echo");
             var wrapper = new EchoWrapper { Value = expected };
@@ -97,7 +97,7 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("expected")]
-        public async Task ShouldWrappedAndOutEcho(string expected)
+        public void ShouldWrappedAndOutEcho(string expected)
         {
             var channel = _fixture.CreateChannel<IEchoServiceContract>(path: "echo");
             var wrapper = new EchoWrapper { Value = expected };
@@ -110,7 +110,7 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
         [Theory]
         [InlineData("")]
         [InlineData("expected")]
-        public async Task ShouldGetFaultException(string expected)
+        public void ShouldGetFaultException(string expected)
         {
             var channel = _fixture.CreateChannel<IFaultServiceContract>(path: "faults");
             var exception = null as Exception;
@@ -132,7 +132,7 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
         [InlineData(null)]
         [InlineData("")]
         [InlineData("expected")]
-        public async Task ShouldGetFaultContract(string expected)
+        public void ShouldGetFaultContract(string expected)
         {
             var channel = _fixture.CreateChannel<IFaultServiceContract>(path: "faults");
             var exception = null as Exception;
@@ -154,7 +154,7 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
         [Theory]
         [InlineData("")]
         [InlineData("expected")]
-        public async Task ShouldGetFaultExceptionWithExceptionDetails(string expected)
+        public void ShouldGetFaultExceptionWithExceptionDetails(string expected)
         {
             var channel = _fixture.CreateChannel<IDetailedFaultServiceContract>(path: "detailedfaults");
             var exception = null as Exception;

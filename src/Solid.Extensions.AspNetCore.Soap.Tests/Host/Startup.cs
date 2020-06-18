@@ -22,9 +22,9 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests.Host
                 .UseRouting()
                 .UseEndpoints(endpoints =>
                 {
-                    endpoints.MapSoapService<IEchoServiceContract>("/echo", _ => { });
-                    endpoints.MapSoapService<IFaultServiceContract>("/faults", _ => { });
-                    endpoints.MapSoapService<IDetailedFaultServiceContract>("/detailedfaults", _ => { });
+                    endpoints.MapSoapService<IEchoServiceContract>("/echo");
+                    endpoints.MapSoapService<IFaultServiceContract>("/faults");
+                    endpoints.MapSoapService<IDetailedFaultServiceContract>("/detailedfaults");
                 })
             ;
         }

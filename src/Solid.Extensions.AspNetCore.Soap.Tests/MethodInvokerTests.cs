@@ -108,7 +108,11 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
         private string SynchronousOutEcho(string value, out string copy) => copy = value;
         private string SynchronousEcho(string value) => value;
 
-        private async Task AsynchronousVoid(string value) => _value = value;
+        private Task AsynchronousVoid(string value) 
+        {
+            _value = value;
+            return Task.CompletedTask;
+        }
 
         private Task<string> AsynchronousEcho(string value) => Task.FromResult(value);
     }
