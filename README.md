@@ -76,7 +76,7 @@ public class Startup
 
 #### Say goodbye to server side Bindings
 
-As you can see above, we are not using System.ServiceModel.Binding on the server side. We felt that it was unnecessary. If you're going to host the service with https, why would you need to program that in? Just host with https!
+As you can see above, we are not using System.ServiceModel.Channels.Binding on the server side. We felt that it was unnecessary. If you're going to host the service with https, why would you need to program that in? Just host with https!
 
 ## Creating client channels for services hosted in AspNetCore
 
