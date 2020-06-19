@@ -14,51 +14,55 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
     {
         private ConcurrentDictionary<string, ICommunicationObject> _channels = new ConcurrentDictionary<string, ICommunicationObject>();
 
-        protected virtual Binding CreateBinding<TContract>(string name, MessageVersion version)
+        public virtual TChannel CreateChannel<TChannel>(MessageVersion version = null, string path = null, bool reusable = true)
+            where TChannel : class
+        {
+            var context = SoapChannelCreationContext.Create<TChannel>(path, version, reusable);
+            return CreateChannel<TChannel>(context);
+        }
+
+        protected virtual Binding CreateBinding<TContract>(string name, SoapChannelCreationContext context)
         {
             var binding = new CustomBinding(new BasicHttpBinding())
             {
             };
             var encoding = binding.Elements.Find<TextMessageEncodingBindingElement>();
-            encoding.MessageVersion = version;
+            encoding.MessageVersion = context.MessageVersion;
             return binding.WithSolidHttpTransport(TestingServer);
         }
 
-        protected virtual EndpointAddress CreateEndpointAddress<TChannel>(string name, Uri url)
+        protected virtual EndpointAddress CreateEndpointAddress<TChannel>(Uri url, SoapChannelCreationContext context)
             => new EndpointAddress(url);
 
-        protected virtual ChannelFactory<TChannel> CreateChannelFactory<TChannel>(string name, Binding binding, EndpointAddress endpointAddress)
+        protected virtual ChannelFactory<TChannel> CreateChannelFactory<TChannel>(Binding binding, EndpointAddress endpointAddress, SoapChannelCreationContext context)
             => new ChannelFactory<TChannel>(binding, endpointAddress);
         
-        protected virtual ICommunicationObject CreateChannel<TChannel>(ChannelFactory<TChannel> factory)
+        protected virtual ICommunicationObject CreateChannel<TChannel>(ChannelFactory<TChannel> factory, SoapChannelCreationContext context)
             => factory.CreateChannel() as ICommunicationObject;
 
-        public TChannel CreateChannel<TChannel>(MessageVersion version = null, string name = "", string path = null, bool reusable = true)
+        protected virtual TChannel CreateChannel<TChannel>(SoapChannelCreationContext context)
             where TChannel : class
         {
-            if(version == null)
-                version = MessageVersion.Default;
-            var key = GenerateKey<TChannel>(version, name, path, !reusable);
-            return _channels.GetOrAdd(key, k =>
+            return _channels.GetOrAdd(context.Id, k =>
             {
-                var binding = CreateBinding<TChannel>(k, version);
                 var url = TestingServer.BaseAddress;
-                if (path != null)
-                    url = new Uri(url, path);
-
-                var endpointAddress = CreateEndpointAddress<TChannel>(k, url);
-                var factory = CreateChannelFactory<TChannel>(k, binding, endpointAddress);
-                var channel = CreateChannel(factory);
+                if (context.Path != null)
+                    url = new Uri(url, context.Path);
+                
+                var binding = CreateBinding<TChannel>(k, context);
+                var endpointAddress = CreateEndpointAddress<TChannel>(url, context);
+                var factory = CreateChannelFactory<TChannel>(binding, endpointAddress, context);
+                var channel = CreateChannel(factory, context);
                 channel.Faulted += (sender, args) => _channels.TryRemove(k, out _);
                 channel.Closing += (sender, args) => _channels.TryRemove(k, out _);
                 return channel;
             }) as TChannel;
         }
 
-        protected virtual string GenerateKey<TChannel>(MessageVersion version, string name, string path, bool unique)
+        protected virtual string GenerateKey<TChannel>(MessageVersion version, string path, bool unique)
         {
-            if (unique) return $"{typeof(TChannel).FullName}__{version}__{name}__{path ?? "/"}__{Guid.NewGuid()}";
-            return $"{typeof(TChannel).FullName}__{version}__{name}__{path ?? "/"}";
+            if (unique) return $"{typeof(TChannel).FullName}__{version}__{path ?? "/"}__{Guid.NewGuid()}";
+            return $"{typeof(TChannel).FullName}__{version}__{path ?? "/"}";
         }
 
         protected override void Disposing()
