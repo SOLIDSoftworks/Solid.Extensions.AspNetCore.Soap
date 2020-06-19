@@ -24,13 +24,23 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests.Host
                 .UseEndpoints(endpoints =>
                 {
                     endpoints.MapSoapService<IEchoServiceContract>("/echo");
-                    //endpoints.MapSoapService<IEchoServiceContract>("/echo1", MessageVersion.None);
-                    endpoints.MapSoapService<IEchoServiceContract>("/echo2", MessageVersion.Soap11);
-                    endpoints.MapSoapService<IEchoServiceContract>("/echo3", MessageVersion.Soap11WSAddressingAugust2004);
-                    endpoints.MapSoapService<IEchoServiceContract>("/echo4", MessageVersion.Soap12WSAddressing10);
-                    endpoints.MapSoapService<IEchoServiceContract>("/echo5", MessageVersion.Soap12WSAddressingAugust2004);
                     endpoints.MapSoapService<IFaultServiceContract>("/faults");
                     endpoints.MapSoapService<IDetailedFaultServiceContract>("/detailedfaults");
+                    //endpoints.MapSoapService<IEchoServiceContract>("/echo0", MessageVersion.None);
+                    endpoints.MapSoapService<IEchoServiceContract>("/echo1", MessageVersion.Soap11);
+                    endpoints.MapSoapService<IEchoServiceContract>("/echo2", MessageVersion.Soap11WSAddressingAugust2004);
+                    endpoints.MapSoapService<IEchoServiceContract>("/echo3", MessageVersion.Soap12WSAddressingAugust2004);
+                    endpoints.MapSoapService<IEchoServiceContract>("/echo4", MessageVersion.Soap12WSAddressing10);
+
+                    endpoints.MapSoapService<IFaultServiceContract>("/faults1", MessageVersion.Soap11);
+                    endpoints.MapSoapService<IFaultServiceContract>("/faults2", MessageVersion.Soap11WSAddressingAugust2004);
+                    endpoints.MapSoapService<IFaultServiceContract>("/faults3", MessageVersion.Soap12WSAddressingAugust2004);
+                    endpoints.MapSoapService<IFaultServiceContract>("/faults4", MessageVersion.Soap12WSAddressing10);
+
+                    endpoints.MapSoapService<IDetailedFaultServiceContract>("/detailedfaults1", MessageVersion.Soap11);
+                    endpoints.MapSoapService<IDetailedFaultServiceContract>("/detailedfaults2", MessageVersion.Soap11WSAddressingAugust2004);
+                    endpoints.MapSoapService<IDetailedFaultServiceContract>("/detailedfaults3", MessageVersion.Soap12WSAddressingAugust2004);
+                    endpoints.MapSoapService<IDetailedFaultServiceContract>("/detailedfaults4", MessageVersion.Soap12WSAddressing10);
                 })
             ;
         }

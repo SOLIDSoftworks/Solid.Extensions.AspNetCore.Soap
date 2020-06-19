@@ -4,6 +4,7 @@ using Solid.Testing.AspNetCore.Extensions.XUnit;
 using Solid.Testing.AspNetCore.Extensions.XUnit.Soap;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
@@ -45,8 +46,8 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
         }
 
         [Theory]
-        [MemberData(nameof(EchoTestData), DisableDiscoveryEnumeration = false)]
-        public void ShouldEcho(EchoTestData data)
+        [MemberData(nameof(GenerateEchoTestData), DisableDiscoveryEnumeration = false)]
+        public void ShouldEcho(TestData data)
         {
             var channel = _fixture.CreateChannel<IEchoServiceContract>(version: data.MessageVersion, path: data.Path);
             var value = channel.Echo(data.Value);
@@ -55,8 +56,8 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
         }
 
         [Theory]
-        [MemberData(nameof(EchoTestData), DisableDiscoveryEnumeration = false)]
-        public async Task ShouldAsynchronouslyEcho(EchoTestData data)
+        [MemberData(nameof(GenerateEchoTestData), DisableDiscoveryEnumeration = false)]
+        public async Task ShouldAsynchronouslyEcho(TestData data)
         {
             var channel = _fixture.CreateChannel<IEchoServiceContract>(version: data.MessageVersion, path: data.Path);
             var value = await channel.AsynchronousEchoAsync(data.Value);
@@ -65,8 +66,8 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
         }
 
         [Theory]
-        [MemberData(nameof(EchoTestData), DisableDiscoveryEnumeration = false)]
-        public void ShouldOutEcho(EchoTestData data)
+        [MemberData(nameof(GenerateEchoTestData), DisableDiscoveryEnumeration = false)]
+        public void ShouldOutEcho(TestData data)
         {
             var channel = _fixture.CreateChannel<IEchoServiceContract>(version: data.MessageVersion, path: data.Path);
             channel.OutEcho(data.Value, out var value);
@@ -75,8 +76,8 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
         }
 
         [Theory]
-        [MemberData(nameof(EchoTestData), DisableDiscoveryEnumeration = false)]
-        public void ShouldWrappedEcho(EchoTestData data)
+        [MemberData(nameof(GenerateEchoTestData), DisableDiscoveryEnumeration = false)]
+        public void ShouldWrappedEcho(TestData data)
         {
             var channel = _fixture.CreateChannel<IEchoServiceContract>(version: data.MessageVersion, path: data.Path);
             var wrapper = new EchoWrapper { Value = data.Value };
@@ -86,8 +87,8 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
         }
 
         [Theory]
-        [MemberData(nameof(EchoTestData), DisableDiscoveryEnumeration = false)]
-        public void ShouldWrappedAndOutEcho(EchoTestData data)
+        [MemberData(nameof(GenerateEchoTestData), DisableDiscoveryEnumeration = false)]
+        public void ShouldWrappedAndOutEcho(TestData data)
         {
             var channel = _fixture.CreateChannel<IEchoServiceContract>(version: data.MessageVersion, path: data.Path);
             var wrapper = new EchoWrapper { Value = data.Value };
@@ -98,15 +99,14 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
         }
 
         [Theory]
-        [InlineData("")]
-        [InlineData("expected")]
-        public void ShouldGetFaultException(string expected)
+        [MemberData(nameof(GenerateFaultTestDataWithoutNull), DisableDiscoveryEnumeration = false)]
+        public void ShouldGetFaultException(TestData data)
         {
-            var channel = _fixture.CreateChannel<IFaultServiceContract>(path: "faults");
+            var channel = _fixture.CreateChannel<IFaultServiceContract>(version: data.MessageVersion, path: data.Path);
             var exception = null as Exception;
             try
             {
-                channel.ThrowsException(expected);
+                channel.ThrowsException(data.Value);
             }
             catch (Exception ex)
             {
@@ -115,20 +115,19 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
 
             Assert.IsType<FaultException>(exception);
             var fault = exception as FaultException;
-            Assert.NotEqual(expected, fault.Message);
+            Assert.NotEqual(data.Value, fault.Message);
         }
 
         [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData("expected")]
-        public void ShouldGetFaultContract(string expected)
+        [MemberData(nameof(GenerateFaultTestData), DisableDiscoveryEnumeration = false)]
+        public void ShouldGetFaultContract(TestData data)
         {
-            var channel = _fixture.CreateChannel<IFaultServiceContract>(path: "faults");
+            var channel = _fixture.CreateChannel<IFaultServiceContract>(version: data.MessageVersion, path: data.Path);
+
             var exception = null as Exception;
             try
             {
-                channel.ThrowsContractFault(expected);
+                channel.ThrowsContractFault(data.Value);
             }
             catch (Exception ex)
             {
@@ -138,19 +137,18 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
             Assert.IsType<FaultException<TestDetail>>(exception);
             var fault = exception as FaultException<TestDetail>;
             var detail = fault.Detail;
-            Assert.Equal(expected, detail.Message);
+            Assert.Equal(data.Value, detail.Message);
         }
 
         [Theory]
-        [InlineData("")]
-        [InlineData("expected")]
-        public void ShouldGetFaultExceptionWithExceptionDetails(string expected)
+        [MemberData(nameof(GenerateDetailedFaultTestDataWithoutNull), DisableDiscoveryEnumeration = false)]
+        public void ShouldGetFaultExceptionWithExceptionDetails(TestData data)
         {
-            var channel = _fixture.CreateChannel<IDetailedFaultServiceContract>(path: "detailedfaults");
+            var channel = _fixture.CreateChannel<IDetailedFaultServiceContract>(version: data.MessageVersion, path: data.Path);
             var exception = null as Exception;
             try
             {
-                channel.ThrowsException(expected);
+                channel.ThrowsException(data.Value);
             }
             catch (Exception ex)
             {
@@ -160,31 +158,44 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
             Assert.IsType<FaultException<ExceptionDetail>>(exception);
             var fault = exception as FaultException<ExceptionDetail>;
             var detail = fault.Detail;
-            Assert.Equal(expected, fault.Message);
-            Assert.Equal(expected, detail.Message);
+            Assert.Equal(data.Value, fault.Message);
+            Assert.Equal(data.Value, detail.Message);
         }
 
-        public static TheoryData<EchoTestData> EchoTestData = new TheoryData<EchoTestData>
+        public static TheoryData<TestData> GenerateEchoTestData() => GenerateTestData("echo");
+
+        public static TheoryData<TestData> GenerateFaultTestData() => GenerateTestData("faults");
+
+        public static TheoryData<TestData> GenerateFaultTestDataWithoutNull() => GenerateTestData("faults", includeNullValues: false);
+
+        public static TheoryData<TestData> GenerateDetailedFaultTestDataWithoutNull() => GenerateTestData("detailedfaults", includeNullValues: false);
+
+        private static TheoryData<TestData> GenerateTestData(string pathPrefix, bool includeNullValues = true)
         {
-            //new EchoTestData { Path = "echo1", Value = null, MessageVersion = MessageVersion.None },
-            //new EchoTestData { Path = "echo1", Value = "", MessageVersion = MessageVersion.None },
-            //new EchoTestData { Path = "echo1", Value = "expected", MessageVersion = MessageVersion.None },
-            new EchoTestData { Path = "echo2", Value = null, MessageVersion = MessageVersion.Soap11 },
-            new EchoTestData { Path = "echo2", Value = "", MessageVersion = MessageVersion.Soap11 },
-            new EchoTestData { Path = "echo2", Value = "expected", MessageVersion = MessageVersion.Soap11 },
-            new EchoTestData { Path = "echo3", Value = null, MessageVersion = MessageVersion.Soap11WSAddressingAugust2004 },
-            new EchoTestData { Path = "echo3", Value = "", MessageVersion = MessageVersion.Soap11WSAddressingAugust2004 },
-            new EchoTestData { Path = "echo3", Value = "expected", MessageVersion = MessageVersion.Soap11WSAddressingAugust2004 },
-            new EchoTestData { Path = "echo4", Value = null, MessageVersion = MessageVersion.Soap12WSAddressing10 },
-            new EchoTestData { Path = "echo4", Value = "", MessageVersion = MessageVersion.Soap12WSAddressing10 },
-            new EchoTestData { Path = "echo4", Value = "expected", MessageVersion = MessageVersion.Soap12WSAddressing10 },
-            new EchoTestData { Path = "echo5", Value = null, MessageVersion = MessageVersion.Soap12WSAddressingAugust2004 },
-            new EchoTestData { Path = "echo5", Value = "", MessageVersion = MessageVersion.Soap12WSAddressingAugust2004 },
-            new EchoTestData { Path = "echo5", Value = "expected", MessageVersion = MessageVersion.Soap12WSAddressingAugust2004 }
+            var data = new TheoryData<TestData>();
+            foreach (var pair in _messageVersions)
+            {
+                var version = pair.Value;
+                var path = $"{pathPrefix}{pair.Key}";
+                foreach (var value in _values.Where(v => includeNullValues || v != null))
+                {
+                    data.Add(new TestData { MessageVersion = version, Path = path, Value = value });
+                }
+            }
+            return data;
+        }
+
+        private static IEnumerable<string> _values = new[] { null, "", "expected" };
+        private static IDictionary<int, MessageVersion> _messageVersions = new Dictionary<int, MessageVersion>
+        {
+            { 1, MessageVersion.Soap11 },
+            { 2, MessageVersion.Soap11WSAddressingAugust2004 },
+            { 3, MessageVersion.Soap12WSAddressingAugust2004  },
+            { 4, MessageVersion.Soap12WSAddressing10 },
         };
     }
 
-    public class EchoTestData
+    public class TestData
     {
         public string Value { get; set; }
         public MessageVersion MessageVersion { get; set; }
