@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
 {
-    abstract class AsyncRequestChannel : IRequestChannel, IOutputChannel
+    abstract class AsyncRequestChannel : IRequestChannel
     {
         protected virtual TimeSpan DefaultTimeout => TimeSpan.FromSeconds(5);
 
@@ -35,17 +35,17 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
         public IAsyncResult BeginClose(AsyncCallback callback, object state) => BeginClose(DefaultTimeout, callback, state);
 
         public IAsyncResult BeginClose(TimeSpan timeout, AsyncCallback callback, object state)
-            => Convert(InternalCloseAsync(timeout), callback, state);
+            => InternalCloseAsync(timeout).ConvertToAsyncResult(callback, state);
 
         public IAsyncResult BeginOpen(AsyncCallback callback, object state) => BeginOpen(DefaultTimeout, callback, state);
 
         public IAsyncResult BeginOpen(TimeSpan timeout, AsyncCallback callback, object state)
-            => Convert(InternalOpenAsync(timeout), callback, state);
+            => InternalOpenAsync(timeout).ConvertToAsyncResult(callback, state);
 
         public IAsyncResult BeginRequest(Message message, AsyncCallback callback, object state) => BeginRequest(message, DefaultTimeout, callback, state);
 
         public IAsyncResult BeginRequest(Message message, TimeSpan timeout, AsyncCallback callback, object state)
-            => Convert(RequestAsync(message, timeout), callback, state);
+            => RequestAsync(message, timeout).ConvertToAsyncResult(callback, state);
 
         public void Close() => Close(DefaultTimeout);
 
@@ -66,37 +66,7 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
         public Message Request(Message message) => Request(message, DefaultTimeout);
 
         public Message Request(Message message, TimeSpan timeout) => RequestAsync(message, timeout).GetAwaiter().GetResult();
-
-        private IAsyncResult Convert(Task task, AsyncCallback callback, object state)
-        {
-            var source = new TaskCompletionSource<object>(state);
-            if (callback != null)
-                source.Task.ContinueWith(t => callback(t));
-            task.ContinueWith(t =>
-            {
-                if (t.IsCompleted)
-                    source.SetResult(null);
-                else if (t.IsFaulted)
-                    source.SetException(t.Exception);
-            });
-            return source.Task;
-        }
-
-        private IAsyncResult Convert<TResult>(Task<TResult> task, AsyncCallback callback, object state)
-        {
-            var source = new TaskCompletionSource<TResult>(state);
-            if (callback != null)
-                source.Task.ContinueWith(t => callback(t));
-            task.ContinueWith(t =>
-            {
-                if (t.IsCompleted)
-                    source.SetResult(t.Result);
-                else if (t.IsFaulted)
-                    source.SetException(t.Exception);
-            });
-            return source.Task;
-        }
-
+        
         async Task InternalOpenAsync(TimeSpan timeout)
         {
             State = CommunicationState.Opening;
@@ -135,31 +105,6 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
                 throw task.Exception;
             }
             if (task.IsCanceled) throw new TaskCanceledException();
-        }
-
-        public IAsyncResult BeginSend(Message message, AsyncCallback callback, object state)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IAsyncResult BeginSend(Message message, TimeSpan timeout, AsyncCallback callback, object state)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void EndSend(IAsyncResult result)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Send(Message message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Send(Message message, TimeSpan timeout)
-        {
-            throw new NotImplementedException();
         }
     }
 }

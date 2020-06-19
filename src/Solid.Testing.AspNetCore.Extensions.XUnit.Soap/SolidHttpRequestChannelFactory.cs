@@ -26,10 +26,14 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
             _settings = settings;
         }
 
-        protected override IAsyncResult OnBeginOpen(TimeSpan timeout, AsyncCallback callback, object state)
+        private Task OnOpenAsync(TimeSpan timeout)
         {
-            throw new NotImplementedException();
+            OnOpen(timeout);
+            return Task.CompletedTask;
         }
+
+        protected override IAsyncResult OnBeginOpen(TimeSpan timeout, AsyncCallback callback, object state)
+            => OnOpenAsync(timeout).ConvertToAsyncResult(callback, state);
 
         protected override IRequestChannel OnCreateChannel(EndpointAddress address, Uri via)
         {
@@ -38,7 +42,10 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
 
         protected override void OnEndOpen(IAsyncResult result)
         {
-            throw new NotImplementedException();
+            if (!(result is Task task)) return;
+
+            if (task.IsFaulted) throw task.Exception;
+            if (task.IsCanceled) throw new TaskCanceledException();
         }
 
         protected override void OnOpen(TimeSpan timeout)
