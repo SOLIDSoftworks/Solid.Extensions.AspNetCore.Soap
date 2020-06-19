@@ -12,6 +12,8 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     public static class Solid_Extensions_AspNetCore_Soap_ServiceCollectionExtensions
     {
+        private static Action<SoapServiceBuilder> _noop = _ => { };
+
         /// <summary>
         /// Adds a SOAP service to the <see cref="IServiceCollection" />.
         /// <para>This SOAP service will be registered with the <seealso cref="ServiceLifetime.Scoped" /> lifetime.</para>
@@ -21,9 +23,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="configure">A delegate used to configure the SOAP service.</param>
         /// <typeparam name="TService">The contract of the SOAP service.</typeparam>
         /// <returns>The <see cref="IServiceCollection" /> instance so that additional calls can be chained.</returns>
-        public static IServiceCollection AddScopedSoapService<TService>(this IServiceCollection services, Func<IServiceProvider, TService> factory, Action<SoapServiceBuilder> configure)
+        public static IServiceCollection AddScopedSoapService<TService>(this IServiceCollection services, Func<IServiceProvider, TService> factory, Action<SoapServiceBuilder> configure = null)
             where TService : class
-            => services.AddSoapService(ServiceDescriptor.Scoped<TService>(factory), configure);
+            => services.AddSoapService(ServiceDescriptor.Scoped<TService>(factory), configure ?? _noop);
 
         /// <summary>
         /// Adds a SOAP service to the <see cref="IServiceCollection" />.
@@ -34,10 +36,10 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TService">The contract of the SOAP service.</typeparam> 
         /// <typeparam name="TImplementation">The implementation type of the SOAP service.</typeparam>
         /// <returns>The <see cref="IServiceCollection" /> instance so that additional calls can be chained.</returns>
-        public static IServiceCollection AddScopedSoapService<TService, TImplementation>(this IServiceCollection services, Action<SoapServiceBuilder> configure)
+        public static IServiceCollection AddScopedSoapService<TService, TImplementation>(this IServiceCollection services, Action<SoapServiceBuilder> configure = null)
             where TImplementation : class, TService
             where TService : class
-            => services.AddSoapService(ServiceDescriptor.Scoped<TService, TImplementation>(), configure);
+            => services.AddSoapService(ServiceDescriptor.Scoped<TService, TImplementation>(), configure ?? _noop);
 
         /// <summary>
         /// Adds a SOAP service to the <see cref="IServiceCollection" />.
@@ -48,9 +50,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="configure">A delegate used to configure the SOAP service.</param>
         /// <typeparam name="TService">The contract of the SOAP service.</typeparam>
         /// <returns>The <see cref="IServiceCollection" /> instance so that additional calls can be chained.</returns>
-        public static IServiceCollection AddSingletonSoapService<TService>(this IServiceCollection services, TService instance, Action<SoapServiceBuilder> configure)
+        public static IServiceCollection AddSingletonSoapService<TService>(this IServiceCollection services, TService instance, Action<SoapServiceBuilder> configure = null)
             where TService : class
-            => services.AddSoapService(ServiceDescriptor.Singleton<TService>(instance), configure);
+            => services.AddSoapService(ServiceDescriptor.Singleton<TService>(instance), configure ?? _noop);
 
         /// <summary>
         /// Adds a SOAP service to the <see cref="IServiceCollection" />.
@@ -61,9 +63,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="configure">A delegate used to configure the SOAP service.</param>
         /// <typeparam name="TService">The contract of the SOAP service.</typeparam>
         /// <returns>The <see cref="IServiceCollection" /> instance so that additional calls can be chained.</returns>
-        public static IServiceCollection AddSingletonSoapService<TService>(this IServiceCollection services, Func<IServiceProvider, TService> factory, Action<SoapServiceBuilder> configure)
+        public static IServiceCollection AddSingletonSoapService<TService>(this IServiceCollection services, Func<IServiceProvider, TService> factory, Action<SoapServiceBuilder> configure = null)
             where TService : class
-            => services.AddSoapService(ServiceDescriptor.Singleton<TService>(factory), configure);
+            => services.AddSoapService(ServiceDescriptor.Singleton<TService>(factory), configure ?? _noop);
 
         /// <summary>
         /// Adds a SOAP service to the <see cref="IServiceCollection" />.
@@ -74,10 +76,10 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TService">The contract of the SOAP service.</typeparam> 
         /// <typeparam name="TImplementation">The implementation type of the SOAP service.</typeparam>
         /// <returns>The <see cref="IServiceCollection" /> instance so that additional calls can be chained.</returns>
-        public static IServiceCollection AddSingletonSoapService<TService, TImplementation>(this IServiceCollection services, Action<SoapServiceBuilder> configure)
+        public static IServiceCollection AddSingletonSoapService<TService, TImplementation>(this IServiceCollection services, Action<SoapServiceBuilder> configure = null)
             where TImplementation : class, TService
             where TService : class
-            => services.AddSoapService(ServiceDescriptor.Singleton<TService, TImplementation>(), configure);
+            => services.AddSoapService(ServiceDescriptor.Singleton<TService, TImplementation>(), configure ?? _noop);
 
         /// <summary>
         /// Configures options for <typeparamref name="TService" />.
