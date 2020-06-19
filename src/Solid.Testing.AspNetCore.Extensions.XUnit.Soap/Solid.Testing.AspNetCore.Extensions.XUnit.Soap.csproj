@@ -16,13 +16,6 @@
     <FileVersion></FileVersion>
     <InformationalVersion></InformationalVersion>
   </PropertyGroup>
-  
-  <PropertyGroup>
-    <VersionPrefix></VersionPrefix>
-    <AssemblyVersion></AssemblyVersion>
-    <FileVersion></FileVersion>
-    <InformationalVersion></InformationalVersion>
-  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Solid.Testing.AspNetCore.Extensions.XUnit" Version="3.0.14-beta" />
