@@ -12,10 +12,22 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
         {
         }
 
-        protected override string GenerateId(string path, MessageVersion messageVersion, bool reusable)
+        protected override string GenerateId(string path, MessageVersion messageVersion, bool reusable, IDictionary<string, object> properties)
         {
-            if (!reusable) return $"{typeof(TChannel).FullName}__{messageVersion}__{path ?? "/"}__{Guid.NewGuid()}";
-            return $"{typeof(TChannel).FullName}__{messageVersion}__{path ?? "/"}";
+            var parts = new List<string>
+            {
+                typeof(TChannel).FullName,
+                messageVersion.ToString(),
+                path ?? "/"
+            };
+
+            foreach (var pair in properties)
+                parts.Add($"{pair.Key}:{pair.Value}");
+
+            if (!reusable)
+                parts.Add(Guid.NewGuid().ToString());
+
+            return string.Join("__", parts);
         }
     }
 
@@ -23,7 +35,6 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
     {
         protected SoapChannelCreationContext(string path, MessageVersion messageVersion, bool reusable)
         {
-            Id = GenerateId(path, messageVersion, reusable);
             Path = path;
             MessageVersion = messageVersion;
             Reusable = reusable;
@@ -31,7 +42,7 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
 
         public bool Reusable { get; }
         public string Path { get; }
-        public string Id { get; }
+        public string Id => GenerateId(Path, MessageVersion, Reusable, Properties);
         public MessageVersion MessageVersion { get;  }
         public IDictionary<string, object> Properties { get; } = new Dictionary<string, object>();
 
@@ -42,6 +53,6 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
             return new SoapChannelCreationContext<TChannel>(path, messageVersion, reusable);
         }
 
-        protected abstract string GenerateId(string path, MessageVersion messageVersion, bool reusable);
+        protected abstract string GenerateId(string path, MessageVersion messageVersion, bool reusable, IDictionary<string, object> properties);
     }
 }
