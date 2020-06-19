@@ -47,7 +47,7 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
             if(response == null)
             {
                 var serializer = new OperationResponseSerializer(result.OutParameters, ns, name);
-                response = Message.CreateMessage(context.Options.MessageVersion, null, result.Result, serializer);
+                response = Message.CreateMessage(context.MessageVersion, null, result.Result, serializer);
             }
             context.Response = response;
         }

@@ -45,66 +45,56 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
         }
 
         [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData("expected")]
-        public void ShouldEcho(string expected)
+        [MemberData(nameof(EchoTestData), DisableDiscoveryEnumeration = false)]
+        public void ShouldEcho(EchoTestData data)
         {
-            var channel = _fixture.CreateChannel<IEchoServiceContract>(path: "echo");
-            var value = channel.Echo(expected);
+            var channel = _fixture.CreateChannel<IEchoServiceContract>(version: data.MessageVersion, path: data.Path);
+            var value = channel.Echo(data.Value);
 
-            Assert.Equal(expected, value);
+            Assert.Equal(data.Value, value);
         }
 
         [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData("expected")]
-        public async Task ShouldAsynchronouslyEcho(string expected)
+        [MemberData(nameof(EchoTestData), DisableDiscoveryEnumeration = false)]
+        public async Task ShouldAsynchronouslyEcho(EchoTestData data)
         {
-            var channel = _fixture.CreateChannel<IEchoServiceContract>(path: "echo");
-            var value = await channel.AsynchronousEchoAsync(expected);
+            var channel = _fixture.CreateChannel<IEchoServiceContract>(version: data.MessageVersion, path: data.Path);
+            var value = await channel.AsynchronousEchoAsync(data.Value);
 
-            Assert.Equal(expected, value);
+            Assert.Equal(data.Value, value);
         }
 
         [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData("expected")]
-        public void ShouldOutEcho(string expected)
+        [MemberData(nameof(EchoTestData), DisableDiscoveryEnumeration = false)]
+        public void ShouldOutEcho(EchoTestData data)
         {
-            var channel = _fixture.CreateChannel<IEchoServiceContract>(path: "echo");
-            channel.OutEcho(expected, out var value);
+            var channel = _fixture.CreateChannel<IEchoServiceContract>(version: data.MessageVersion, path: data.Path);
+            channel.OutEcho(data.Value, out var value);
 
-            Assert.Equal(expected, value);
+            Assert.Equal(data.Value, value);
         }
 
         [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData("expected")]
-        public void ShouldWrappedEcho(string expected)
+        [MemberData(nameof(EchoTestData), DisableDiscoveryEnumeration = false)]
+        public void ShouldWrappedEcho(EchoTestData data)
         {
-            var channel = _fixture.CreateChannel<IEchoServiceContract>(path: "echo");
-            var wrapper = new EchoWrapper { Value = expected };
+            var channel = _fixture.CreateChannel<IEchoServiceContract>(version: data.MessageVersion, path: data.Path);
+            var wrapper = new EchoWrapper { Value = data.Value };
             var response = channel.WrappedEcho(wrapper);
 
-            Assert.Equal(expected, response.Value);
+            Assert.Equal(data.Value, response.Value);
         }
 
         [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData("expected")]
-        public void ShouldWrappedAndOutEcho(string expected)
+        [MemberData(nameof(EchoTestData), DisableDiscoveryEnumeration = false)]
+        public void ShouldWrappedAndOutEcho(EchoTestData data)
         {
-            var channel = _fixture.CreateChannel<IEchoServiceContract>(path: "echo");
-            var wrapper = new EchoWrapper { Value = expected };
+            var channel = _fixture.CreateChannel<IEchoServiceContract>(version: data.MessageVersion, path: data.Path);
+            var wrapper = new EchoWrapper { Value = data.Value };
             var response = channel.WrappedAndOutEcho(wrapper, out var value);
 
-            Assert.Equal(expected, response.Value);
-            Assert.Equal(expected, value);
+            Assert.Equal(data.Value, response.Value);
+            Assert.Equal(data.Value, value);
         }
 
         [Theory]
@@ -173,5 +163,31 @@ namespace Solid.Extensions.AspNetCore.Soap.Tests
             Assert.Equal(expected, fault.Message);
             Assert.Equal(expected, detail.Message);
         }
+
+        public static TheoryData<EchoTestData> EchoTestData = new TheoryData<EchoTestData>
+        {
+            //new EchoTestData { Path = "echo1", Value = null, MessageVersion = MessageVersion.None },
+            //new EchoTestData { Path = "echo1", Value = "", MessageVersion = MessageVersion.None },
+            //new EchoTestData { Path = "echo1", Value = "expected", MessageVersion = MessageVersion.None },
+            new EchoTestData { Path = "echo2", Value = null, MessageVersion = MessageVersion.Soap11 },
+            new EchoTestData { Path = "echo2", Value = "", MessageVersion = MessageVersion.Soap11 },
+            new EchoTestData { Path = "echo2", Value = "expected", MessageVersion = MessageVersion.Soap11 },
+            new EchoTestData { Path = "echo3", Value = null, MessageVersion = MessageVersion.Soap11WSAddressingAugust2004 },
+            new EchoTestData { Path = "echo3", Value = "", MessageVersion = MessageVersion.Soap11WSAddressingAugust2004 },
+            new EchoTestData { Path = "echo3", Value = "expected", MessageVersion = MessageVersion.Soap11WSAddressingAugust2004 },
+            new EchoTestData { Path = "echo4", Value = null, MessageVersion = MessageVersion.Soap12WSAddressing10 },
+            new EchoTestData { Path = "echo4", Value = "", MessageVersion = MessageVersion.Soap12WSAddressing10 },
+            new EchoTestData { Path = "echo4", Value = "expected", MessageVersion = MessageVersion.Soap12WSAddressing10 },
+            new EchoTestData { Path = "echo5", Value = null, MessageVersion = MessageVersion.Soap12WSAddressingAugust2004 },
+            new EchoTestData { Path = "echo5", Value = "", MessageVersion = MessageVersion.Soap12WSAddressingAugust2004 },
+            new EchoTestData { Path = "echo5", Value = "expected", MessageVersion = MessageVersion.Soap12WSAddressingAugust2004 }
+        };
+    }
+
+    public class EchoTestData
+    {
+        public string Value { get; set; }
+        public MessageVersion MessageVersion { get; set; }
+        public string Path { get; set; }
     }
 }

@@ -12,8 +12,8 @@ namespace Solid.Extensions.AspNetCore.Soap
 {
     internal class SoapContext<TContract> : SoapContext
     {
-        public SoapContext(HttpContext http, Message request, SoapServiceOptions options) 
-            : base(http, request, options)
+        public SoapContext(HttpContext http, Message request, MessageVersion version, SoapServiceOptions options) 
+            : base(http, request, version, options)
         {
         }
 
@@ -25,10 +25,11 @@ namespace Solid.Extensions.AspNetCore.Soap
     /// </summary>
     public abstract class SoapContext
     {
-        internal SoapContext(HttpContext http, Message request, SoapServiceOptions options)
+        internal SoapContext(HttpContext http, Message request, MessageVersion version, SoapServiceOptions options)
         {
             HttpContext = http;
             Request = request;
+            MessageVersion = version;
             Options = options;
         }
 
@@ -51,6 +52,11 @@ namespace Solid.Extensions.AspNetCore.Soap
         /// The <see cref="SoapServiceOptions" /> instance for the SOAP service contract being invoked.
         /// </summary>
         public SoapServiceOptions Options { get; }
+
+        /// <summary>
+        /// The SOAP <see cref="MessageVersion" /> of the endpoint being invoked.
+        /// </summary>
+        public MessageVersion MessageVersion { get; }
 
         /// <summary>
         /// The <see cref="IServiceProvider" /> scoped for the current http request.

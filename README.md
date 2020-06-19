@@ -56,11 +56,27 @@ var encoding = binding.Elements.Find<TextMessageEncodingBindingElement>();
 encoding.MessageVersion = MessageVersion.Default;
 ```
 
+## Changing the message version
+
 The message version can also be changed on the server side using the new options pattern.
 
 ```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddSingletonSoapService<IEchoServiceContract, EchoService>(options => options.MessageVersion = MessageVersion.Soap11);
-}
+    public void Configure(IApplicationBuilder builder)
+    {
+#if NETCOREAPP3_1
+        builder
+            .UseRouting()
+            .UseEndpoints(endpoints => endpoints.MapSoapService<IEchoServiceContract>("/echo", MessageVersion.Soap11))
+        ;
+#else
+        builder.MapSoapService<IEchoServiceContract>("/echo", MessageVersion.Soap11);
+#endif
+    }
+```
+
+Then the client side binding could be:
+
+```csharp
+// BasicHttpBinding uses MessageVersion.Soap11 as it's default.
+var binding = new BasicHttpBinding();
 ```

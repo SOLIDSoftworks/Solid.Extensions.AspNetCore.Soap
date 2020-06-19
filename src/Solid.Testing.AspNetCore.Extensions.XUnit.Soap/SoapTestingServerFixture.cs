@@ -14,13 +14,13 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
     {
         private ConcurrentDictionary<string, ICommunicationObject> _channels = new ConcurrentDictionary<string, ICommunicationObject>();
 
-        protected virtual Binding CreateBinding<TContract>(string name)
+        protected virtual Binding CreateBinding<TContract>(string name, MessageVersion version)
         {
             var binding = new CustomBinding(new BasicHttpBinding())
             {
             };
             var encoding = binding.Elements.Find<TextMessageEncodingBindingElement>();
-            encoding.MessageVersion = MessageVersion.Default;
+            encoding.MessageVersion = version;
             return binding.WithSolidHttpTransport(TestingServer);
         }
 
@@ -33,13 +33,15 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
         protected virtual ICommunicationObject CreateChannel<TChannel>(ChannelFactory<TChannel> factory)
             => factory.CreateChannel() as ICommunicationObject;
 
-        public TChannel CreateChannel<TChannel>(string name = "", string path = null, bool reusable = true)
+        public TChannel CreateChannel<TChannel>(MessageVersion version = null, string name = "", string path = null, bool reusable = true)
             where TChannel : class
         {
-            var key = GenerateKey<TChannel>(name, path, !reusable);
+            if(version == null)
+                version = MessageVersion.Default;
+            var key = GenerateKey<TChannel>(version, name, path, !reusable);
             return _channels.GetOrAdd(key, k =>
             {
-                var binding = CreateBinding<TChannel>(k);
+                var binding = CreateBinding<TChannel>(k, version);
                 var url = TestingServer.BaseAddress;
                 if (path != null)
                     url = new Uri(url, path);
@@ -53,10 +55,10 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
             }) as TChannel;
         }
 
-        protected virtual string GenerateKey<TChannel>(string name, string path, bool unique)
+        protected virtual string GenerateKey<TChannel>(MessageVersion version, string name, string path, bool unique)
         {
-            if (unique) return $"{typeof(TChannel).FullName}__{name}__{path ?? "/"}__{Guid.NewGuid()}";
-            return $"{typeof(TChannel).FullName}__{name}__{path ?? "/"}";
+            if (unique) return $"{typeof(TChannel).FullName}__{version}__{name}__{path ?? "/"}__{Guid.NewGuid()}";
+            return $"{typeof(TChannel).FullName}__{version}__{name}__{path ?? "/"}";
         }
 
         protected override void Disposing()

@@ -23,11 +23,6 @@ namespace Solid.Extensions.AspNetCore.Soap
         public string Namespace { get; internal set; }
 
         /// <summary>
-        /// The message version of the SOAP service.
-        /// </summary>
-        public MessageVersion MessageVersion { get; set; } = MessageVersion.Default;
-
-        /// <summary>
         /// The max size of headers for SOAP messages.
         /// </summary>
         public int MaxSizeOfHeaders { get; set; } = int.MaxValue;

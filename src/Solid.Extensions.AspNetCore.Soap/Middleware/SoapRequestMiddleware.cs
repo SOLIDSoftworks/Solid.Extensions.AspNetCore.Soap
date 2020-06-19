@@ -18,15 +18,18 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
 {
     internal class SoapRequestMiddleware<TService>
     {
+        private MessageVersion _version;
         private SoapServiceOptions _options;
         private ILogger _logger;
         private RequestDelegate _next;
         public SoapRequestMiddleware(
+            MessageVersion version,
             IOptionsSnapshot<SoapServiceOptions> snapshot, 
             ILoggerFactory loggerFactory, 
             RequestDelegate next)
         {
             var type = typeof(TService);
+            _version = version;
             _options = snapshot.Get(type.FullName);
             _logger = loggerFactory.CreateLogger("Solid.Extensions.AspNetCore.Soap.Middleware.SoapRequestMiddleware");
             _next = next;
@@ -42,11 +45,13 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
                 {
                     using (var reader = XmlReader.Create(context.Request.Body))
                     {
-                        var request = Message.CreateMessage(reader, _options.MaxSizeOfHeaders, _options.MessageVersion);
+                        var request = Message.CreateMessage(reader, _options.MaxSizeOfHeaders, _version);
+                        if(request.Headers.Action == null)
+                            request.Headers.Action = context.Request.Headers["SOAPAction"];
 
                         LoggerMessages.LogIncomingRequest(_logger, ref request);
 
-                        var soap = new SoapContext<TService>(context, request, _options);
+                        var soap = new SoapContext<TService>(context, request, _version, _options);
                         context.SetSoapContext(soap);
                         try
                         {
@@ -56,13 +61,13 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
                         {
                             _logger.LogError(ex.InnerException, "Fault exception");
                             var messageFault = fault.CreateMessageFault();
-                            soap.Response = FaultMessage.CreateFaultMessage(soap.Options.MessageVersion, messageFault, soap.Request.Headers.Action);
+                            soap.Response = FaultMessage.CreateFaultMessage(soap.MessageVersion, messageFault, soap.Request.Headers.Action);
                         }
                         catch (FaultException ex)
                         {
                             _logger.LogError(ex, "Fault exception");
                             var messageFault = ex.CreateMessageFault();
-                            soap.Response = FaultMessage.CreateFaultMessage(soap.Options.MessageVersion, messageFault, soap.Request.Headers.Action);
+                            soap.Response = FaultMessage.CreateFaultMessage(soap.MessageVersion, messageFault, soap.Request.Headers.Action);
                         }
                         if (soap?.Response == null) return; // throw exception?
                         if (context.Response.Body.Length > 0) return; // response manually written
@@ -112,7 +117,7 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
 
         private FaultException CreateFaultException(SoapContext context, Exception exception)
         {
-            var version = context.Options.MessageVersion;
+            var version = context.MessageVersion;
             var code = version.CreateFaultCode();
             if (context.Options.IncludeExceptionDetailInFaults)
             {

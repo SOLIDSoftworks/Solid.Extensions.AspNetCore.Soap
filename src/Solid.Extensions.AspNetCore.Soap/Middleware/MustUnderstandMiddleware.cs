@@ -22,10 +22,10 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
         {
             if(context.Options.ValidateMustUnderstand)
             {
-                if (!context.Request.Headers.HaveMandatoryHeadersBeenUnderstood())
+                if (!context.Request.Headers.HaveMandatoryHeadersBeenUnderstood(new string[0]))
                 {
-                    var reason = context.Options.MessageVersion.CreateFaultReason(reason: "An immediate child element of the Header element, with the mustUnderstand attribute set to \"1\", was not understood");
-                    var code = context.Options.MessageVersion.CreateFaultCode(code: "MustUnderstand");
+                    var reason = context.MessageVersion.CreateFaultReason(reason: "An immediate child element of the Header element, with the mustUnderstand attribute set to \"1\", was not understood");
+                    var code = context.MessageVersion.CreateFaultCode(code: "MustUnderstand");
 
                     var headers = context
                         .Request

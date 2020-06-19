@@ -7,6 +7,7 @@ using Solid.Extensions.AspNetCore.Soap.Builder;
 using Solid.Extensions.AspNetCore.Soap.Middleware;
 using System;
 using System.Collections.Generic;
+using System.ServiceModel.Channels;
 using System.Text;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -24,7 +25,13 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TService">The SOAP service contract.</typeparam>
         /// <returns>The <see cref="IEndpointRouteBuilder" /> instance so that additional calls can be chained.</returns>
         public static IEndpointRouteBuilder MapSoapService<TService>(this IEndpointRouteBuilder endpoints, PathString path)
-            => endpoints.MapSoapService<TService>(path, _ => {});
+            => endpoints.MapSoapService<TService>(path, MessageVersion.Default);
+
+        public static IEndpointRouteBuilder MapSoapService<TService>(this IEndpointRouteBuilder endpoints, PathString path, MessageVersion version)
+            => endpoints.MapSoapService<TService>(path, version, _ => {});
+
+        public static IEndpointRouteBuilder MapSoapService<TService>(this IEndpointRouteBuilder endpoints, PathString path, Action<ISoapApplicationBuilder> configure)
+            => endpoints.MapSoapService<TService>(path, MessageVersion.Default, configure);
 
         /// <summary>
         /// Maps a SOAP endpoint to a <paramref name="path" />.
@@ -34,10 +41,10 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="configure">A delegate for adding middleware into the SOAP request pipeline.</param>
         /// <typeparam name="TService">The SOAP service contract.</typeparam>
         /// <returns>The <see cref="IEndpointRouteBuilder" /> instance so that additional calls can be chained.</returns>
-        public static IEndpointRouteBuilder MapSoapService<TService>(this IEndpointRouteBuilder endpoints, PathString path, Action<ISoapApplicationBuilder> configure)
+        public static IEndpointRouteBuilder MapSoapService<TService>(this IEndpointRouteBuilder endpoints, PathString path, MessageVersion version, Action<ISoapApplicationBuilder> configure)
         {
             var builder = endpoints.CreateApplicationBuilder();
-            builder.UseSoapService<TService>(configure);
+            builder.UseSoapService<TService>(version, configure);
             var requestDelegate = builder.Build();
 
             endpoints.Map(RoutePatternFactory.Parse(path), requestDelegate);
