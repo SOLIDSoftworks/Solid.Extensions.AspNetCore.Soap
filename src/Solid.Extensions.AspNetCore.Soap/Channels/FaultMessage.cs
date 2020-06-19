@@ -136,7 +136,7 @@ namespace Solid.Extensions.AspNetCore.Soap.Channels
                 var reason = Fault.Reason.GetMatchingTranslation();
                 writer.WriteStartElement("Reason", SoapConstants.Soap12EnvelopeNamespace);
                 writer.WriteStartElement("Text", SoapConstants.Soap12EnvelopeNamespace);
-                writer.WriteAttributeString("xml", "lang", SoapConstants.XmlNamespace, reason.XmlLang);
+                writer.WriteAttributeString("xml", "lang", XmlConstants.XmlNamespace, reason.XmlLang);
                 writer.WriteString(reason.Text);
                 writer.WriteEndElement();
                 writer.WriteEndElement();
