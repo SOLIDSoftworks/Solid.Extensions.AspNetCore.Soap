@@ -71,14 +71,17 @@ namespace Solid.Extensions.AspNetCore.Soap.Channels
 
         class Soap11FaultMessage : FaultMessage
         {
+            private SoapConstants _constants;
+
             public Soap11FaultMessage(MessageVersion version, MessageFault fault, string action)
                 : base(version, fault, action)
             {
+                _constants = SoapConstants.Soap11;
             }
 
             protected override void OnWriteBodyContents(XmlDictionaryWriter writer)
             {
-                writer.WriteStartElement("Fault", SoapConstants.Soap11EnvelopeNamespace);
+                writer.WriteStartElement("Fault", _constants.EnvelopeNamespace);
 
                 WriteFaultCodeElement(writer, Fault.Code);
                 writer.WriteElementString("faultstring", Fault.Reason.GetMatchingTranslation().Text);
@@ -98,8 +101,8 @@ namespace Solid.Extensions.AspNetCore.Soap.Channels
 
             private void WriteFaultCodeElement(XmlDictionaryWriter writer, FaultCode code)
             {
-                var prefix = writer.LookupPrefix(SoapConstants.Soap11EnvelopeNamespace);
-                if (!string.IsNullOrEmpty(code.Namespace) && code.Namespace != SoapConstants.Soap11EnvelopeNamespace)
+                var prefix = writer.LookupPrefix(_constants.EnvelopeNamespace);
+                if (!string.IsNullOrEmpty(code.Namespace) && code.Namespace != _constants.EnvelopeNamespace)
                     prefix = writer.LookupPrefix(code.Namespace) ?? "custom";
 
                 var name = code.Name;
@@ -122,32 +125,35 @@ namespace Solid.Extensions.AspNetCore.Soap.Channels
         }
         class Soap12FaultMessage : FaultMessage
         {
+            private SoapConstants _constants;
+
             public Soap12FaultMessage(MessageVersion version, MessageFault fault, string action) : base(version, fault, action)
             {
+                _constants = SoapConstants.Soap12;
             }
 
             protected override void OnWriteBodyContents(XmlDictionaryWriter writer)
             {
-                writer.WriteStartElement("Fault", SoapConstants.Soap12EnvelopeNamespace);
+                writer.WriteStartElement("Fault", _constants.EnvelopeNamespace);
 
                 WriteFaultCodeElement(writer, Fault.Code, "Code");
                 //writer.WriteElementString("Value", Constants.Soap12EnvelopeNamespace, GetFaultCodeString(Fault.Code));
 
                 var reason = Fault.Reason.GetMatchingTranslation();
-                writer.WriteStartElement("Reason", SoapConstants.Soap12EnvelopeNamespace);
-                writer.WriteStartElement("Text", SoapConstants.Soap12EnvelopeNamespace);
-                writer.WriteAttributeString("xml", "lang", XmlConstants.XmlNamespace, reason.XmlLang);
+                writer.WriteStartElement("Reason", _constants.EnvelopeNamespace);
+                writer.WriteStartElement("Text", _constants.EnvelopeNamespace);
+                writer.WriteAttributeString("xml", "lang", _constants.XmlNamespace, reason.XmlLang);
                 writer.WriteString(reason.Text);
                 writer.WriteEndElement();
                 writer.WriteEndElement();
 
-                writer.WriteElementString("Node", SoapConstants.Soap12EnvelopeNamespace, Fault.Node);
+                writer.WriteElementString("Node", _constants.EnvelopeNamespace, Fault.Node);
 
                 if (Fault.HasDetail)
                 {
                     using (var reader = Fault.GetReaderAtDetailContents())
                     {
-                        writer.WriteStartElement("Detail", SoapConstants.Soap12EnvelopeNamespace);
+                        writer.WriteStartElement("Detail", _constants.EnvelopeNamespace);
                         writer.WriteElement(reader);
                         writer.WriteEndElement();
                     }
@@ -157,13 +163,13 @@ namespace Solid.Extensions.AspNetCore.Soap.Channels
 
             private void WriteFaultCodeElement(XmlDictionaryWriter writer, FaultCode code, string localName)
             {
-                var prefix = writer.LookupPrefix(SoapConstants.Soap12EnvelopeNamespace);
-                if (!string.IsNullOrEmpty(code.Namespace) && code.Namespace != SoapConstants.Soap12EnvelopeNamespace)
+                var prefix = writer.LookupPrefix(_constants.EnvelopeNamespace);
+                if (!string.IsNullOrEmpty(code.Namespace) && code.Namespace != _constants.EnvelopeNamespace)
                     prefix = writer.LookupPrefix(code.Namespace) ?? "custom";
 
                 var name = code.Name;
-                writer.WriteStartElement(localName, SoapConstants.Soap12EnvelopeNamespace);
-                writer.WriteStartElement("Value", SoapConstants.Soap12EnvelopeNamespace);
+                writer.WriteStartElement(localName, _constants.EnvelopeNamespace);
+                writer.WriteStartElement("Value", _constants.EnvelopeNamespace);
 
                 if (!code.IsPredefinedFault)
                 {
