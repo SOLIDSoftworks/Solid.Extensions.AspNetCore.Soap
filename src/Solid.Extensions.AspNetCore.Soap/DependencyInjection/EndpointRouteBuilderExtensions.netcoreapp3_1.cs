@@ -27,9 +27,25 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IEndpointRouteBuilder MapSoapService<TService>(this IEndpointRouteBuilder endpoints, PathString path)
             => endpoints.MapSoapService<TService>(path, MessageVersion.Default);
 
+        /// <summary>
+        /// Maps a SOAP endpoint to a <paramref name="path" />.
+        /// </summary>
+        /// <param name="endpoints">The <see cref="IEndpointRouteBuilder" /> instance.</param>
+        /// <param name="path">The path to map <typeparamref name="TService" /> to.</param>
+        /// <param name="version">The <see cref="MessageVersion" /> of the SOAP endpoint being mapped.</param>
+        /// <typeparam name="TService">The SOAP service contract.</typeparam>
+        /// <returns>The <see cref="IEndpointRouteBuilder" /> instance so that additional calls can be chained.</returns>
         public static IEndpointRouteBuilder MapSoapService<TService>(this IEndpointRouteBuilder endpoints, PathString path, MessageVersion version)
             => endpoints.MapSoapService<TService>(path, version, _ => {});
 
+        /// <summary>
+        /// Maps a SOAP endpoint to a <paramref name="path" />.
+        /// </summary>
+        /// <param name="endpoints">The <see cref="IEndpointRouteBuilder" /> instance.</param>
+        /// <param name="path">The path to map <typeparamref name="TService" /> to.</param>
+        /// <param name="configure">A delegate for adding middleware into the SOAP request pipeline.</param>
+        /// <typeparam name="TService">The SOAP service contract.</typeparam>
+        /// <returns>The <see cref="IEndpointRouteBuilder" /> instance so that additional calls can be chained.</returns>
         public static IEndpointRouteBuilder MapSoapService<TService>(this IEndpointRouteBuilder endpoints, PathString path, Action<ISoapApplicationBuilder> configure)
             => endpoints.MapSoapService<TService>(path, MessageVersion.Default, configure);
 
@@ -38,6 +54,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="endpoints">The <see cref="IEndpointRouteBuilder" /> instance.</param>
         /// <param name="path">The path to map <typeparamref name="TService" /> to.</param>
+        /// <param name="version">The <see cref="MessageVersion" /> of the SOAP endpoint being mapped.</param>
         /// <param name="configure">A delegate for adding middleware into the SOAP request pipeline.</param>
         /// <typeparam name="TService">The SOAP service contract.</typeparam>
         /// <returns>The <see cref="IEndpointRouteBuilder" /> instance so that additional calls can be chained.</returns>
