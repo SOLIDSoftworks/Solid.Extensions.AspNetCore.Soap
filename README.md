@@ -74,6 +74,29 @@ public class Startup
 
 ```
 
+#### Configuring the request pipeline
+
+Middleware can be added in the MapSoapService methods, both for endpoint routing in AspNetCore 3.1 and middleware in AspNetCore 2.1. This can be done to, for example, handle custom SOAP headers. Any AspNetCore middleware can be used as well as middleware that implements either our SoapMiddleware or SoapHeaderMiddleware classes.
+
+```csharp
+public void Configure(IApplicationBuilder builder)
+{
+    builder
+        .UseRouting()
+        .UseEndpoints(endpoints => 
+        {
+            endpoints.MapSoapService<IEchoServiceContract>(
+              "/echo", 
+              MessageVersion.Soap11, 
+              // This will be used after the SOAP request has been accepted.
+              // This will be used before all SOAP headers must be understood and before the service method has been invoked.
+              b => b.AddMiddleware<MyCustomMiddleware>()
+            );
+        })
+    ;
+}
+```
+
 #### Say goodbye to server side Bindings
 
 As you can see above, we are not using System.ServiceModel.Channels.Binding on the server side. We felt that it was unnecessary. If you're going to host the service with https, why would you need to program that in? Just host with https!
