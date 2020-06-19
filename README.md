@@ -17,7 +17,12 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddSingletonSoapService<IEchoServiceContract, EchoService>();
+        services
+#if NETCOREAPP3_1
+            .AddRouting()
+#endif
+            .AddSingletonSoapService<IEchoServiceContract, EchoService>()
+        ;
     }
 
     public void Configure(IApplicationBuilder builder)
@@ -58,7 +63,7 @@ encoding.MessageVersion = MessageVersion.Default;
 
 ## Changing the message version
 
-The message version can also be changed on the server side using the new options pattern.
+The message version can also be changed on the server side per mapped endpoint.
 
 ```csharp
     public void Configure(IApplicationBuilder builder)
@@ -66,10 +71,15 @@ The message version can also be changed on the server side using the new options
 #if NETCOREAPP3_1
         builder
             .UseRouting()
-            .UseEndpoints(endpoints => endpoints.MapSoapService<IEchoServiceContract>("/echo", MessageVersion.Soap11))
+            .UseEndpoints(endpoints => 
+            {
+                endpoints.MapSoapService<IEchoServiceContract>("/echo_legacy", MessageVersion.Soap11);
+                endpoints.MapSoapService<IEchoServiceContract>("/echo", MessageVersion.Default);
+            })
         ;
 #else
-        builder.MapSoapService<IEchoServiceContract>("/echo", MessageVersion.Soap11);
+        builder.MapSoapService<IEchoServiceContract>("/echo_legacy", MessageVersion.Soap11);
+        builder.MapSoapService<IEchoServiceContract>("/echo", MessageVersion.Default);
 #endif
     }
 ```
