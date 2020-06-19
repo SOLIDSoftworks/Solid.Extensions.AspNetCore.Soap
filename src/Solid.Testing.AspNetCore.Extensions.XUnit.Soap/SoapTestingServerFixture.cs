@@ -21,7 +21,7 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
             return CreateChannel<TChannel>(context);
         }
 
-        protected virtual Binding CreateBinding<TContract>(string name, SoapChannelCreationContext context)
+        protected virtual Binding CreateBinding<TContract>(SoapChannelCreationContext context)
         {
             var binding = new CustomBinding(new BasicHttpBinding())
             {
@@ -49,7 +49,7 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
                 if (context.Path != null)
                     url = new Uri(url, context.Path);
                 
-                var binding = CreateBinding<TChannel>(k, context).WithSolidHttpTransport(TestingServer);
+                var binding = CreateBinding<TChannel>(context).WithSolidHttpTransport(TestingServer);
                 var endpointAddress = CreateEndpointAddress<TChannel>(url, context);
                 var factory = CreateChannelFactory<TChannel>(binding, endpointAddress, context);
                 var channel = CreateChannel(factory, context);
