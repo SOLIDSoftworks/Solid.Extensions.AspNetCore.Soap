@@ -1,17 +1,24 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Solid.Extensions.AspNetCore.Soap.Builder
 {
-    internal class SoapApplicationBuilder : ISoapApplicationBuilder, IApplicationBuilder
+    internal class SoapApplicationBuilder<TService> : ISoapApplicationBuilder, IApplicationBuilder
     {
         private IApplicationBuilder _inner;
 
         public SoapApplicationBuilder(IApplicationBuilder inner) => _inner = inner;
+
+        public Type Contract => typeof(TService);
+
+        public SoapServiceOptions Options => ApplicationServices.GetService<IOptionsMonitor<SoapServiceOptions>>().Get(Contract.FullName);
+
         public IServiceProvider ApplicationServices { get => _inner.ApplicationServices; set => _inner.ApplicationServices = value; }
 
         public IFeatureCollection ServerFeatures => _inner.ServerFeatures;

@@ -66,7 +66,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if(version == MessageVersion.None)
                 throw new InvalidOperationException("Solid.Extensions.AspNetCore.Soap doens't support MessageVersion.None");
             builder.UseMiddleware<SoapRequestMiddleware<TService>>(version);
-            var soap = new SoapApplicationBuilder(builder);
+            var soap = new SoapApplicationBuilder<TService>(builder);
             configure(soap);
             builder.UseMiddleware<MustUnderstandMiddleware>();
             builder.UseMiddleware<SoapServiceInvokerMiddleware>();
