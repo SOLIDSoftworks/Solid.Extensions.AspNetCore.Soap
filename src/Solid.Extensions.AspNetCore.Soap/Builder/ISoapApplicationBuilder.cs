@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,5 +23,10 @@ namespace Solid.Extensions.AspNetCore.Soap.Builder
         /// The <see cref="SoapServiceOptions"/> for the service mapped to the endpoint.
         /// </summary>
         SoapServiceOptions Options { get; }
+
+        /// <summary>
+        /// The path of the endpoint being mapped.
+        /// </summary>
+        PathString Path { get; }
     }
 }

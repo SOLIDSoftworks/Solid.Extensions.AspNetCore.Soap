@@ -13,7 +13,13 @@ namespace Solid.Extensions.AspNetCore.Soap.Builder
     {
         private IApplicationBuilder _inner;
 
-        public SoapApplicationBuilder(IApplicationBuilder inner) => _inner = inner;
+        public SoapApplicationBuilder(PathString path, IApplicationBuilder inner)
+        {
+            Path = path;
+            _inner = inner;
+        }
+
+        public PathString Path { get; }
 
         public Type Contract => typeof(TService);
 

@@ -57,16 +57,16 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>The <see cref="IApplicationBuilder" /> instance so that additional calls can be chained.</returns>
         public static IApplicationBuilder MapSoapService<TService>(this IApplicationBuilder builder, PathString path, MessageVersion version, Action<ISoapApplicationBuilder> configure)
         {
-            builder.Map(path, b => b.UseSoapService<TService>(version, configure));
+            builder.Map(path, b => b.UseSoapService<TService>(path, version, configure));
             return builder;
         }
 
-        internal static IApplicationBuilder UseSoapService<TService>(this IApplicationBuilder builder, MessageVersion version, Action<ISoapApplicationBuilder> configure)
+        internal static IApplicationBuilder UseSoapService<TService>(this IApplicationBuilder builder, PathString path, MessageVersion version, Action<ISoapApplicationBuilder> configure)
         {
             if(version == MessageVersion.None)
                 throw new InvalidOperationException("Solid.Extensions.AspNetCore.Soap doens't support MessageVersion.None");
             builder.UseMiddleware<SoapRequestMiddleware<TService>>(version);
-            var soap = new SoapApplicationBuilder<TService>(builder);
+            var soap = new SoapApplicationBuilder<TService>(path, builder);
             configure(soap);
             builder.UseMiddleware<MustUnderstandMiddleware>();
             builder.UseMiddleware<SoapServiceInvokerMiddleware>();

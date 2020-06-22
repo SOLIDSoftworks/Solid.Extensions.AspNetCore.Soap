@@ -61,7 +61,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IEndpointRouteBuilder MapSoapService<TService>(this IEndpointRouteBuilder endpoints, PathString path, MessageVersion version, Action<ISoapApplicationBuilder> configure)
         {
             var builder = endpoints.CreateApplicationBuilder();
-            builder.UseSoapService<TService>(version, configure);
+            builder.UseSoapService<TService>(path, version, configure);
             var requestDelegate = builder.Build();
 
             endpoints.Map(RoutePatternFactory.Parse(path), requestDelegate);
