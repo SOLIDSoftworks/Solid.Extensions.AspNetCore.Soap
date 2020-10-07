@@ -16,21 +16,28 @@ using System.Xml;
 
 namespace Solid.Extensions.AspNetCore.Soap.Middleware
 {
-    internal class SoapRequestMiddleware<TService>
+    internal class SoapRequestMiddleware<TService> : IDisposable
     {
         private MessageVersion _version;
         private SoapServiceOptions _options;
+        private IDisposable _optionsChangeToken;
         private ILogger _logger;
         private RequestDelegate _next;
+
         public SoapRequestMiddleware(
             MessageVersion version,
-            IOptionsSnapshot<SoapServiceOptions> snapshot, 
+            IOptionsMonitor<SoapServiceOptions> monitor, 
             ILoggerFactory loggerFactory, 
             RequestDelegate next)
         {
             var type = typeof(TService);
             _version = version;
-            _options = snapshot.Get(type.FullName);
+            _options = monitor.Get(type.FullName);
+            _optionsChangeToken = monitor.OnChange((options, name) =>
+            {
+                if (name == type.FullName)
+                    _options = options;
+            });
             _logger = loggerFactory.CreateLogger("Solid.Extensions.AspNetCore.Soap.Middleware.SoapRequestMiddleware");
             _next = next;
         }
@@ -127,5 +134,7 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
 
             return new FaultException(version.CreateFaultReason(), code, context.Request.Headers.Action);
         }
+
+        public void Dispose() => _optionsChangeToken?.Dispose();
     }
 }
