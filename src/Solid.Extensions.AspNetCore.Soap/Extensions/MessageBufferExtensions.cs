@@ -21,7 +21,10 @@ namespace System.ServiceModel.Channels
         {
             var message = buffer.CreateMessage();
             using (var reader = buffer.GetReader(indent: indent))
+            {
+                reader.MoveToContent();
                 return reader.ReadOuterXml();
+            }
         }
 
         /// <summary>
