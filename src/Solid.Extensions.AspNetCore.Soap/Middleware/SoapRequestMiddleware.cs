@@ -90,7 +90,7 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
 
                         LoggerMessages.LogOutgoingResponse(_logger, ref response);
 
-                        using (var writer = XmlWriter.Create(context.Response.Body, new XmlWriterSettings { OmitXmlDeclaration = true }))
+                        using (var writer = XmlWriter.Create(context.Response.Body, new XmlWriterSettings { OmitXmlDeclaration = true, Encoding = new UTF8Encoding(false) }))
                             response.WriteMessage(writer);
                     }
                 }
