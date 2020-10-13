@@ -37,7 +37,7 @@ namespace System.ServiceModel.Channels
         {
             var message = buffer.CreateMessage();
             var stream = new MemoryStream();
-            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { CloseOutput = false, Indent = indent, Encoding = Encoding.UTF8 }))
+            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { CloseOutput = false, Indent = indent, Encoding = new UTF8Encoding(false) }))
                 message.WriteMessage(writer);
             stream.Position = 0;
             return XmlReader.Create(stream);
