@@ -28,13 +28,12 @@ namespace Sample1.Client
             encoding.MessageVersion = MessageVersion.Soap12WSAddressing10;
 
             var factory = new ChannelFactory<IEchoServiceContract>(binding, new EndpointAddress("http://localhost:5000/echo"));
-            var channel = factory.CreateChannel();
-
 
             for (var i = 0; i < 1_000_000; i++)
             {
+                var channel = factory.CreateChannel();
                 Console.WriteLine($"Performing echo request: {i}");
-                _ = channel.Echo("poop");
+                _ = channel.Echo("echo");
                 //Thread.Sleep(50);
             }
         }
