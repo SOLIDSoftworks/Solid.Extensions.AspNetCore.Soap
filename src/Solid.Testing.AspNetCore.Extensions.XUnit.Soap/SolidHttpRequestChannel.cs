@@ -51,7 +51,6 @@ namespace Solid.Testing.AspNetCore.Extensions.XUnit.Soap
                     .WithContent(content)
                 ;
 
-                
                 using(var responseContent = await response.Content.ReadAsStreamAsync())
                 using(var reader = XmlReader.Create(responseContent))
                 {

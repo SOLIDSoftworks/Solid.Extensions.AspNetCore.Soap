@@ -19,28 +19,18 @@ namespace System.ServiceModel.Channels
         /// <returns>An XML <see cref="string"/>.</returns>
         public static string ReadAll(this MessageBuffer buffer, bool indent = true)
         {
-            var message = buffer.CreateMessage();
-            using (var reader = buffer.GetReader(indent: indent))
+            using (var message = buffer.CreateMessage())
+            using (var stream = new MemoryStream())
             {
-                reader.MoveToContent();
-                return reader.ReadOuterXml();
+                using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { CloseOutput = false, Indent = indent, Encoding = new UTF8Encoding(false) }))
+                    message.WriteMessage(writer);
+                stream.Position = 0;
+                using (var reader = XmlReader.Create(stream))
+                {
+                    reader.MoveToContent();
+                    return reader.ReadOuterXml();
+                }
             }
-        }
-
-        /// <summary>
-        /// Gets an <see cref="XmlReader"/> from a <seealso cref="MessageBuffer"/> positioned at index 0.
-        /// </summary>
-        /// <param name="buffer">The <see cref="MessageBuffer"/> to created the <seealso cref="XmlReader"/> for.</param>
-        /// <param name="indent">A flag to set whether the XML will be indented or not.</param>
-        /// <returns>An <see cref="XmlReader"/>.</returns>
-        public static XmlReader GetReader(this MessageBuffer buffer, bool indent = true)
-        {
-            var message = buffer.CreateMessage();
-            var stream = new MemoryStream();
-            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { CloseOutput = false, Indent = indent, Encoding = new UTF8Encoding(false) }))
-                message.WriteMessage(writer);
-            stream.Position = 0;
-            return XmlReader.Create(stream);
         }
     }
 }

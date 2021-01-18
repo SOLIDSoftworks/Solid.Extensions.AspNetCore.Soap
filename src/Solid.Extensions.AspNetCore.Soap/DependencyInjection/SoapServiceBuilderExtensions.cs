@@ -8,3 +8,5 @@
 //     {
 //     }
 // }
+
+// TODO: add AddContractExtension method for adding another service that can respond on same endpoint. Like RST requests.

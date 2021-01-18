@@ -7,12 +7,16 @@ using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Solid.Extensions.AspNetCore.Soap.Middleware
 {
     internal class MustUnderstandMiddleware : SoapMiddleware
     {
+        private static readonly ThreadLocal<StringBuilder> _localErrorMessageBuilder = new ThreadLocal<StringBuilder>(() => new StringBuilder());
+        private static StringBuilder ErrorMessageBuilder => _localErrorMessageBuilder.Value;
+
         public MustUnderstandMiddleware(RequestDelegate next, ILogger<MustUnderstandMiddleware> logger) 
             : base(next, logger)
         {
@@ -44,12 +48,13 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
 
         private string CreateMessage(IEnumerable<MessageHeaderInfo> headers)
         {
-            var builder = new StringBuilder();
-            builder.AppendLine("Not all headers understood.");
-            builder.AppendLine("Headers marked mustUnderstand=\"1\" and not understood:");
+            ErrorMessageBuilder.AppendLine("Not all headers understood.");
+            ErrorMessageBuilder.AppendLine("Headers marked mustUnderstand=\"1\" and not understood:");
             foreach (var header in headers)
-                builder.AppendLine($"  localName: {header.Name} - namespace: {header.Namespace}");
-            return builder.ToString();
+                ErrorMessageBuilder.AppendLine($"  localName: {header.Name} - namespace: {header.Namespace}");
+            var errorMessage = ErrorMessageBuilder.ToString();
+            ErrorMessageBuilder.Clear();
+            return errorMessage;
         }
     }
 }

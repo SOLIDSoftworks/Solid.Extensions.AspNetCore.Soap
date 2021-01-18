@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.ServiceModel.Channels;
 using System.Text;
+using System.Xml;
 
 namespace Solid.Extensions.AspNetCore.Soap.Logging
 {
@@ -30,15 +31,16 @@ namespace Solid.Extensions.AspNetCore.Soap.Logging
         {
             if (!logger.IsEnabled(IncomingRequestLogLevel)) return;
 
-            var buffer = message.CreateBufferedCopy(_bufferSize);
+            using var buffer = message.CreateBufferedCopy(_bufferSize);
             IncomingRequest(logger, buffer.ReadAll(), null);
             message = buffer.CreateMessage();
         }
         public static void LogOutgoingResponse(ILogger logger, ref Message message)
         {
             if (!logger.IsEnabled(OutgoingResponseLogLevel)) return;
-
-            var buffer = message.CreateBufferedCopy(_bufferSize);
+            if (message.IsEmpty) return;
+            
+            using var buffer = message.CreateBufferedCopy(_bufferSize);
             OutgoingResponse(logger, buffer.ReadAll(), null);
             message = buffer.CreateMessage();
         }

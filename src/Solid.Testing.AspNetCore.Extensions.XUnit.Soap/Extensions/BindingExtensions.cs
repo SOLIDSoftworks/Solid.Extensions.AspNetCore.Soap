@@ -25,7 +25,8 @@ namespace System.ServiceModel.Channels
                 .Elements
                 .OfType<HttpTransportBindingElement>()
                 .Where(e => e.Scheme == "http" || e.Scheme == "https")
-                .FirstOrDefault();
+                .FirstOrDefault()
+            ;
             if (http != null)
             {
                 var solid = new SolidHttpTransportBindingElement(server, settings);

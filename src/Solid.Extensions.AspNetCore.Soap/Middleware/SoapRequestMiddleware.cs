@@ -53,7 +53,8 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
                     using (var reader = XmlReader.Create(context.Request.Body))
                     {
                         var request = Message.CreateMessage(reader, _options.MaxSizeOfHeaders, _version);
-                        if(request.Headers.Action == null)
+
+                        if (request.Headers.Action == null)
                             request.Headers.Action = context.Request.Headers["SOAPAction"];
 
                         LoggerMessages.LogIncomingRequest(_logger, ref request);
@@ -66,16 +67,13 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
                         }
                         catch (TargetInvocationException ex) when (ex.InnerException is FaultException fault)
                         {
-                            _logger.LogError(ex.InnerException, "Fault exception");
-                            var messageFault = fault.CreateMessageFault();
-                            soap.Response = FaultMessage.CreateFaultMessage(soap.MessageVersion, messageFault, soap.Request.Headers.Action);
+                            HandleFaultException(fault, soap);
                         }
                         catch (FaultException ex)
                         {
-                            _logger.LogError(ex, "Fault exception");
-                            var messageFault = ex.CreateMessageFault();
-                            soap.Response = FaultMessage.CreateFaultMessage(soap.MessageVersion, messageFault, soap.Request.Headers.Action);
+                            HandleFaultException(ex, soap);
                         }
+
                         if (soap?.Response == null) return; // throw exception?
                         if (context.Response.Body.Length > 0) return; // response manually written
 
@@ -92,9 +90,19 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
 
                         using (var writer = XmlWriter.Create(context.Response.Body, new XmlWriterSettings { OmitXmlDeclaration = true, Encoding = new UTF8Encoding(false) }))
                             response.WriteMessage(writer);
+
+                        context.Response.RegisterForDispose(request);
+                        context.Response.RegisterForDispose(response);
                     }
                 }
             }
+        }
+
+        private void HandleFaultException(FaultException ex, SoapContext<TService> context)
+        {
+            _logger.LogWarning(ex, $"Fault exception: {ex.Message}");
+            var messageFault = ex.CreateMessageFault();
+            context.Response = FaultMessage.CreateFaultMessage(context.MessageVersion, messageFault, context.Request.Headers.Action);
         }
 
         private async Task Next(HttpContext context)

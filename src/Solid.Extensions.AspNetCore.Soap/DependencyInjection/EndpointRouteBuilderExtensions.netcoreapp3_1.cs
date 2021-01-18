@@ -64,7 +64,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.UseSoapService<TService>(path, version, configure);
             var requestDelegate = builder.Build();
 
-            endpoints.Map(RoutePatternFactory.Parse(path), requestDelegate);
+            endpoints.Map(path, requestDelegate);
             return endpoints;
         }
     }
