@@ -51,7 +51,8 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
         {
             var index = FindHeaderIndex(context, Name, Namespace);
             if(index >= 0)
-            { 
+            {
+                using var activity = Tracing.Soap.StartActivity($"{nameof(SoapHeaderMiddleware)}.{nameof(InvokeAsync)}");
                 Logger.LogDebug($"Attempting to handle header '{Name}'.");
 
                 var header = context.Request.Headers[index];

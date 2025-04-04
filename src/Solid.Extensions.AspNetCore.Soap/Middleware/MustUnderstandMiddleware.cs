@@ -26,6 +26,7 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
         {
             if(context.Options.ValidateMustUnderstand)
             {
+                using var activity = Tracing.Soap.StartActivity($"{nameof(MustUnderstandMiddleware)}.{nameof(InvokeAsync)}");
                 if (!context.Request.Headers.HaveMandatoryHeadersBeenUnderstood(new string[0]))
                 {
                     var reason = context.MessageVersion.CreateFaultReason(reason: "An immediate child element of the Header element, with the mustUnderstand attribute set to \"1\", was not understood");

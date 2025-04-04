@@ -34,6 +34,7 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
 
         protected override async ValueTask InvokeAsync(SoapContext context)
         {
+            using var activity = Tracing.Soap.StartActivity($"{nameof(SoapServiceInvokerMiddleware)}.{nameof(InvokeAsync)}");
             var action = context.Request.Headers.Action;
             var instance = context.RequestServices.GetService(context.Contract);
 

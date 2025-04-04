@@ -23,9 +23,23 @@ namespace Solid.Extensions.AspNetCore.Soap
             _factory = factory;
         }
 
-        public MethodInfo GetMethod(Type contract, string action) => FindOperation(contract, action).Method;
-        public string GetOperationName(Type contract, string action) => FindOperation(contract, action).Name;
-        public string GetNamespace(Type contract, string action) => FindOperation(contract, action).Namespace;
+        public MethodInfo GetMethod(Type contract, string action)
+        {
+            using var activity = Tracing.Soap.StartActivity($"{nameof(MethodLocator)}.{nameof(GetMethod)}");
+            return FindOperation(contract, action).Method;
+        }
+
+        public string GetOperationName(Type contract, string action)
+        {
+            using var activity = Tracing.Soap.StartActivity($"{nameof(MethodLocator)}.{nameof(GetOperationName)}");
+            return FindOperation(contract, action).Name;
+        }
+
+        public string GetNamespace(Type contract, string action)
+        {
+            using var activity = Tracing.Soap.StartActivity($"{nameof(MethodLocator)}.{nameof(GetNamespace)}");
+            return FindOperation(contract, action).Namespace;
+        }
 
         private OperationDescriptor FindOperation(Type contract, string action)
         {

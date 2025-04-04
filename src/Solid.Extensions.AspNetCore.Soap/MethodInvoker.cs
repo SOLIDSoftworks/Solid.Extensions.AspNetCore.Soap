@@ -24,6 +24,7 @@ namespace Solid.Extensions.AspNetCore.Soap
 
         public async ValueTask<MethodInvocationResult> InvokeMethodAsync(object instance, MethodInfo method, IEnumerable<MethodParameter> args, CancellationToken cancellationToken = default)
         {            
+            using var activity = Tracing.Soap.StartActivity($"{nameof(MethodInvoker)}.{nameof(InvokeMethodAsync)}");
             var isVoid = IsVoid(method);
             var isTask = IsTask(method);
             //var isValueTask = IsValueTask(method);

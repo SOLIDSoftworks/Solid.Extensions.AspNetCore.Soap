@@ -16,6 +16,7 @@ namespace Solid.Extensions.AspNetCore.Soap
             new ConcurrentDictionary<(Type ParameterType, string ParameterName, string ServiceNamespace), DataContractSerializer>();
         public IEnumerable<MethodParameter> ReadParameters(MethodInfo method, Message message, string serviceNamespace)
         {
+            using var activity = Tracing.Soap.StartActivity($"{nameof(MethodParameterReader)}.{nameof(ReadParameters)}");
             var parameters = method.GetParameters();
             if (parameters.Length == 0) return Enumerable.Empty<MethodParameter>();
             if (parameters.All(p => p.IsOut)) return parameters.Select(p => new MethodParameter { Name = p.Name, Out = true });

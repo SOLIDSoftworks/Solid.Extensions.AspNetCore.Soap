@@ -44,6 +44,7 @@ namespace Solid.Extensions.AspNetCore.Soap.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
+            using var activity = Tracing.Soap.StartActivity($"SoapRequestMiddleware<{typeof(TService).Name}>.{nameof(InvokeAsync)}");
             using (_logger.BeginScope($"Soap contract namespace: {_options.Namespace}"))
             using (_logger.BeginScope($"Soap contract name: {_options.Name}"))
             {
