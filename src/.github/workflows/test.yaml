@@ -1,0 +1,33 @@
+name: test
+on:
+  push:
+    paths:
+      - ".github/**/*.*"
+      - "src/**/*.*"
+  pull_request:
+    types: [assigned, opened, synchronize, reopened]
+env:
+  DOTNET_ROLL_FORWARD_ON_NO_CANDIDATE_FX: '2'
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: setup_dotnet
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: |
+            6.0.x
+            8.0.x
+            9.0.x
+
+      - name: install_dependencies
+        run: dotnet restore ./src/Solid.Extensions.AspNetCore.Soap.sln
+
+      - name: build
+        run: dotnet build ./src/Solid.Extensions.AspNetCore.Soap.sln --configuration Release --no-restore
+
+      - name: test
+        run: dotnet test ./src/Solid.Extensions.AspNetCore.Soap.sln --configuration Release --no-restore --no-build
