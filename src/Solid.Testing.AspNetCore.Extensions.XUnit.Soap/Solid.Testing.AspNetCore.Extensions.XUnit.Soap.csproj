@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net6.0;net8.0;net9.0</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
     <Authors>SOLID Softworks</Authors>
     <Copyright>© SOLID Softworks. All rights reserved.</Copyright>
@@ -8,13 +8,6 @@
     <PackageProjectUrl>https://github.com/SOLIDSoftworks/Solid.Extensions.AspNetCore.Soap</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/SOLIDSoftworks/Solid.Extensions.AspNetCore.Soap</RepositoryUrl>
-  </PropertyGroup>
-  
-  <PropertyGroup>
-    <VersionPrefix></VersionPrefix>
-    <AssemblyVersion></AssemblyVersion>
-    <FileVersion></FileVersion>
-    <InformationalVersion></InformationalVersion>
   </PropertyGroup>
 
   <ItemGroup>

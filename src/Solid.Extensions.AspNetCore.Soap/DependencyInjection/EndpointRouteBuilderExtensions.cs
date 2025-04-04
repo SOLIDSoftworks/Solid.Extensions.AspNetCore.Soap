@@ -1,5 +1,4 @@
-﻿#if NETCOREAPP3_1
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
@@ -15,7 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
     /// <summary>
     /// Extensions for adding endpoints for SOAP services.
     /// </summary>
-    public static class Solid_Extensions_AspNetCore_Soap_EndpointRouteBuilderExtensions
+    public static class EndpointRouteBuilderExtensions
     {
         /// <summary>
         /// Maps a SOAP endpoint to a <paramref name="path" />.
@@ -69,4 +68,3 @@ namespace Microsoft.Extensions.DependencyInjection
         }
     }
 }
-#endif

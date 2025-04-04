@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection
     /// <summary>
     /// Extensions methods for adding SOAP services to <see cref="IServiceCollection" />.
     /// </summary>
-    public static class Solid_Extensions_AspNetCore_Soap_ServiceCollectionExtensions
+    public static class ServiceCollectionExtensions
     {
         private static Action<SoapServiceBuilder> _noop = _ => { };
 

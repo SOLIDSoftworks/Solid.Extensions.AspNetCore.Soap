@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">  
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net6.0;net8.0;net9.0</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
     <Authors>SOLID Softworks</Authors>
     <Copyright>© SOLID Softworks. All rights reserved.</Copyright>
@@ -10,24 +10,12 @@
     <RepositoryUrl>https://github.com/SOLIDSoftworks/Solid.Extensions.AspNetCore.Soap</RepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <VersionPrefix></VersionPrefix>
-    <AssemblyVersion></AssemblyVersion>
-    <FileVersion></FileVersion>
-    <InformationalVersion></InformationalVersion>
-  </PropertyGroup>
   
   <ItemGroup>
     <Compile Include=".properties\InternalsVisibleTo.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework) == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.1.7" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.1.1" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-  </ItemGroup>
-  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp3.1'">
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 

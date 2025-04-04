@@ -3,7 +3,7 @@
 ![AppVeyor tests](https://img.shields.io/appveyor/tests/gislikonrad/solid-extensions-aspnetcore-soap)
 ![GitHub](https://img.shields.io/github/license/SOLIDSoftworks/Solid.Extensions.AspNetCore.Soap) 
 ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/Solid.Extensions.AspNetCore.Soap)
-![Supported frameworks](https://img.shields.io/badge/AspNetCore-2.1%20%7C%203.1-blue)
+![Supported frameworks](https://img.shields.io/badge/AspNetCore-6.0%20%7C%208.0%20%7C%209.0-blue)
 
 ## How to use
 

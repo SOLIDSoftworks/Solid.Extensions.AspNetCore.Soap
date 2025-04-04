@@ -32,7 +32,7 @@ namespace Sample1
                 .UseEndpoints(endpoints =>
                 {
                     endpoints.MapSoapService<IEchoServiceContract>("/echo");
-                    endpoints.Map("/", endpoints.CreateApplicationBuilder().Use(async (context, next) =>
+                    endpoints.Map("/", endpoints.CreateApplicationBuilder().Use(async (HttpContext context, RequestDelegate next) =>
                     {
                         context.Items.Add("guid", Guid.NewGuid().ToString());
                         await context.Response.WriteAsync(context.Items["guid"] as string);
