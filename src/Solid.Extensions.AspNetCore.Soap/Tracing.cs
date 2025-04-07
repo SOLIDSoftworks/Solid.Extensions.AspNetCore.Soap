@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace Solid.Extensions.AspNetCore.Soap
 {
-    public class Tracing
+    public static class Tracing
     {
         public static ActivitySource Soap = new ActivitySource(Names.Soap, GenerateAssemblyVersion()); 
         
