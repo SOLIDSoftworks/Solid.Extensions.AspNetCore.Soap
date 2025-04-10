@@ -1,3 +1,6 @@
+# Archived
+This repository has been archived and all relevant code moved to the [Solid.Identity](https://github.com/SOLIDSoftworks/Solid.Identity) repository.
+
 # Solid.Extensions.AspNetCore.Soap
 [![Build status](https://ci.appveyor.com/api/projects/status/p02vomixb4sslmt8/branch/master?svg=true)](https://ci.appveyor.com/project/gislikonrad/solid-extensions-aspnetcore-soap/branch/master) 
 ![AppVeyor tests](https://img.shields.io/appveyor/tests/gislikonrad/solid-extensions-aspnetcore-soap)
